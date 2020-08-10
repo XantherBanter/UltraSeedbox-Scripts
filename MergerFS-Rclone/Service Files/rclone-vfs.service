@@ -9,16 +9,22 @@ KillMode=none
 Environment=GOMAXPROCS=2
 
 ExecStart=/homexx/yyyyy/bin/rclone mount gdrive: /homexx/yyyyy/Stuff/Mount \
-  --user-agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36' \
+  --user-agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36' \
   --config /homexx/yyyyy/.config/rclone/rclone.conf \
   --use-mmap \
-  --dir-cache-time 168h \
+  --dir-cache-time 1000h \
+  --drive-skip-gdocs \
+  --drive-acknowledge-abuse=true \
   --timeout 1h \
-  --poll-interval=1m \
+  --poll-interval=30s \
   --vfs-cache-mode writes \
-  --vfs-read-chunk-size 64M \
-  --vfs-read-chunk-size-limit 2048M \
-  --tpslimit 10
+  --vfs-read-chunk-size 32M \
+  --tpslimit 10 \
+  --rc \
+  --rc-addr=127.0.0.1:zzzzz \
+  --rc-user=ttttt \
+  --rc-pass=vvvvv
+ExecStartPost=/homexx/yyyyy/bin/rclone rc vfs/refresh recursive=true --rc-addr=127.0.0.1:zzzzz --rc-user=ttttt --rc-pass=vvvvv _async=true
 
 StandardOutput=file:/homexx/yyyyy/scripts/rclone_vfs_mount.log
 ExecStop=/bin/fusermount -uz /homexx/yyyyy/Stuff/Mount
