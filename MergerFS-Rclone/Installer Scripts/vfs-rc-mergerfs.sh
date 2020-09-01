@@ -1,8 +1,7 @@
 #!/bin/bash
 
 # Rclone VFS/MergerFS Installer/Updater Script by Xan#7777
-# With RC. Use with caution. Much Beta.
-# Script is working beta.
+# With RC. Use with caution
 
 clear
 
@@ -63,7 +62,7 @@ echo ""
 echo "Installing mergerfs..."
     sleep 2
     cd "$HOME"/.mergerfs-tmp || exit
-    wget https://github.com/trapexit/mergerfs/releases/download/2.30.0/mergerfs_2.30.0.debian-stretch_amd64.deb -O "$HOME"/.mergerfs-tmp/mergerfs.deb
+    wget https://github.com/trapexit/mergerfs/releases/download/2.28.3/mergerfs_2.28.3.debian-stretch_amd64.deb -O "$HOME"/.mergerfs-tmp/mergerfs.deb
     dpkg -x "$HOME"/.mergerfs-tmp/mergerfs.deb "$HOME"/.mergerfs-tmp
     mv "$HOME"/.mergerfs-tmp/usr/bin/* "$HOME"/bin
     command -v mergerfs
@@ -227,29 +226,6 @@ echo "Checking if rclone/mergerfs mounts are working..."
         exit
     fi
 
-# Media Center Tuneup (Some simple seds to optimize Plex for media cloud mount)
-# Will add more later
-
-clear
-echo "Are you using Plex?"
-read -p "Type yes or no: " input1
-if [ "$input1" = "yes" ]
-then
-    echo "Applying sweaks to Plex...."
-    sed -i -E 's/GenerateIntroMarkerBehavior="(scheduled|asap)"/GenerateIntroMarkerBehavior="never"/g' "$HOME"/.config/plex/Library/Application\ Support/Plex\ Media\ Server/Preferences.xml
-    sed -i -E 's/GenerateChapterThumbBehavior="(scheduled|asap)"/GenerateChapterThumbBehavior="never"/g' "$HOME"/.config/plex/Library/Application\ Support/Plex\ Media\ Server/Preferences.xml
-    sed -i -E 's/LoudnessAnalysisBehavior="(scheduled|asap)"/LoudnessAnalysisBehavior="never"/g' "$HOME"/.config/plex/Library/Application\ Support/Plex\ Media\ Server/Preferences.xml
-    sed -i 's|ButlerTaskDeepMediaAnalysis="1"|ButlerTaskDeepMediaAnalysis="0"|g' "$HOME"/.config/plex/Library/Application\ Support/Plex\ Media\ Server/Preferences.xml
-    sed -i 's|DisableTLSv1_0="0"|DisableTLSv1_0="1"|g' "$HOME"/.config/plex/Library/Application\ Support/Plex\ Media\ Server/Preferences.xml
-    sed -i 's|DlnaReportTimeline="1"|DlnaReportTimeline="0"|g' "$HOME"/.config/plex/Library/Application\ Support/Plex\ Media\ Server/Preferences.xml
-    sed -i 's|DlnaEnabled="1"|DlnaEnabled="0"|g' "$HOME"/.config/plex/Library/Application\ Support/Plex\ Media\ Server/Preferences.xml
-    sed -i 's|GdmEnabled="1"|GdmEnabled="0"|g' "$HOME"/.config/plex/Library/Application\ Support/Plex\ Media\ Server/Preferences.xml
-elif [ "$input1" = "no" ]
-then
-    echo "Skipping..."
-    sleep 2
-fi
-
 echo "Cleaning up..."
     sleep 2
     rclone delete "$remotename":test
@@ -259,5 +235,5 @@ echo "Cleaning up..."
 clear
 echo "Done. Run exec $SHELL to complete installation."
 cd "$HOME" || exit
-source "$HOME"/.bash_aliases
+. "$HOME"/.bash_aliases
 exit
