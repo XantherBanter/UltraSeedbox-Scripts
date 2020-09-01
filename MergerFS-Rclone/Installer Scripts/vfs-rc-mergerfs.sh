@@ -126,8 +126,8 @@ fi
 echo "Done. Downloading service files..."
     sleep 2
     cd "$HOME"/.config/systemd/user || exit
-    wget https://raw.githubusercontent.com/ultraseedbox/UltraSeedbox-Scripts/rclone-vfs/MergerFS-Rclone/Service%20Files/rclone-vfs.service
-    wget https://raw.githubusercontent.com/ultraseedbox/UltraSeedbox-Scripts/rclone-vfs/MergerFS-Rclone/Service%20Files/mergerfs.service
+    wget https://raw.githubusercontent.com/XantherBanter/UltraSeedbox-Scripts/master/MergerFS-Rclone/Service%20Files/rclone-vfs.service
+    wget https://raw.githubusercontent.com/XantherBanter/UltraSeedbox-Scripts/master/MergerFS-Rclone/Service%20Files/mergerfs.service
     sed -i "s|/homexx/yyyyy|$HOME|g" "$HOME"/.config/systemd/user/rclone-vfs.service
     sed -i "s|gdrive:|$remotename:|g" "$HOME"/.config/systemd/user/rclone-vfs.service
     sed -i "s|zzzzz|$port|g" "$HOME"/.config/systemd/user/rclone-vfs.service
@@ -137,8 +137,8 @@ echo "Done. Downloading service files..."
 
 echo "Installing systemd uploader..."
     sleep 2
-    wget https://raw.githubusercontent.com/ultraseedbox/UltraSeedbox-Scripts/rclone-vfs/MergerFS-Rclone/Upload%20Scripts/rclone-uploader.service
-    wget https://raw.githubusercontent.com/ultraseedbox/UltraSeedbox-Scripts/rclone-vfs/MergerFS-Rclone/Upload%20Scripts/rclone-uploader.timer
+    wget https://raw.githubusercontent.com/XantherBanter/UltraSeedbox-Scripts/master/MergerFS-Rclone/Upload%20Scripts/rclone-uploader.service
+    wget https://raw.githubusercontent.com/XantherBanter/UltraSeedbox-Scripts/master/MergerFS-Rclone/Upload%20Scripts/rclone-uploader.timer
     sed -i "s|/homexx/yyyyy|$HOME|g" "$HOME"/.config/systemd/user/rclone-uploader.service
     sed -i "s|gdrive:|$remotename:|g" "$HOME"/.config/systemd/user/rclone-uploader.service
 
