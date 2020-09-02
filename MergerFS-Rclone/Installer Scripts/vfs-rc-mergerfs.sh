@@ -16,7 +16,7 @@ fi
 clear
 
 # Variables
-password=$(openssl rand -hex 24)
+password=$(openssl rand -hex 12)
 
 echo "Creating necessary folders..."
     mkdir -p "$HOME"/Stuff
@@ -259,5 +259,6 @@ echo "Cleaning up..."
 clear
 echo "Done. Run exec $SHELL to complete installation."
 cd "$HOME" || exit
+# shellcheck disable=SC1090
 source "$HOME"/.bash_aliases
 exit
