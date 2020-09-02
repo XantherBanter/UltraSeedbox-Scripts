@@ -280,4 +280,12 @@ echo "Done. Run exec $SHELL to complete installation."
 cd "$HOME" || exit
 # shellcheck disable=SC1090
 source "$HOME"/.bash_aliases
+
+# Quick man for vfs aliases
+echo "This script has installed the following aliases to manage your rclone vfs cache, which is useful when your mount does not have the latest changes from your remote."
+echo "Just type the following commands in your shell"
+echo ""
+echo "vfs-refresh = This pulls the latest changes from the remote and refreshes the directory cache in your mount."
+echo "vfs-forget = This forgets the directory paths of the rclone mount, causing it to be reread from the remote."
+
 exit
