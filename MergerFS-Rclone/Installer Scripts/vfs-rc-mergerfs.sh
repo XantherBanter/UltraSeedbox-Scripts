@@ -176,8 +176,6 @@ echo "Starting services..."
     systemctl --user daemon-reload
     systemctl --user enable --now rclone-vfs.service
     systemctl --user enable --now mergerfs.service
-    systemctl --user enable --now rclone-uploader.service
-    systemctl --user enable --now rclone-uploader.timer
 
 echo "Checking if rclone/mergerfs mounts are working..."
     if [ -z "$(ls -A "$HOME"/Stuff/Local)" ]; then
@@ -256,7 +254,26 @@ echo "Cleaning up..."
     rm -rfv "$HOME"/.rclone-tmp
     rm -rfv "$HOME"/.mergerfs-tmp
 
+# Uploader Service Prompt
 clear
+echo "Do you want to start the uploader service?"
+read -p "Type yes or no: " input2
+if [ "$input2" = "yes" ]
+then
+    echo "Starting Uploader service..."
+    systemctl --user enable --now rclone-uploader.service
+    systemctl --user enable --now rclone-uploader.timer
+elif [ "$input2" = "no" ]
+then
+    echo "Will skip. Please run the following command to start the uploader service by yourself"
+    echo ""
+    echo "systemctl --user enable --now rclone-uploader.service && systemctl --user enable --now rclone-uploader.timer"
+    echo ""
+    sleep 7
+fi
+
+clear
+
 echo "Done. Run exec $SHELL to complete installation."
 cd "$HOME" || exit
 # shellcheck disable=SC1090
