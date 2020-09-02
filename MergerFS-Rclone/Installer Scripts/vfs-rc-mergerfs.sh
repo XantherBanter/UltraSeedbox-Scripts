@@ -216,15 +216,24 @@ echo "Checking if rclone/mergerfs mounts are working..."
     fi
     echo "MergerFS Test 2 Starting..."
     rclone move "$HOME"/Stuff/Local/test "$remotename": -vvv
-    sleep 30
+    echo "Waiting for 60 seconds..."
+    sleep 60
         if [ -f "$HOME"/MergerFS/test ] && [ ! -f "$HOME"/Stuff/Local/test ] && [ -f "$HOME"/Stuff/Mount/test ]; then
         echo "MergerFS Test 2 ended successfully."
         echo "Continuing setup..."
         sleep 5
     else
         echo "MergerFS Test 2 not successful."
-        echo "Run the script again."
-        exit
+        echo "This might be due to the remote/system not refreshing accordingly and you can probably skip this and check later. Skip?"
+        read -p "Type yes or no: " choice
+        if [ "$choice" = "yes" ]
+        then
+            echo "Got it. Skipping..."
+        elif [ "$choice" = "no" ]
+        then
+            echo "Gotcha. Script will exit."
+            exit
+        fi
     fi
 
 # Media Center Tuneup (Some simple seds to optimize Plex for media cloud mount)
