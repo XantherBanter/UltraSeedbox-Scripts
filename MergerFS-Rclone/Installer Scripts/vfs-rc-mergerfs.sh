@@ -27,10 +27,12 @@ echo "Creating necessary folders..."
     mkdir -p "$HOME"/.rclone-tmp
     mkdir -p "$HOME"/.mergerfs-tmp
 
-echo "Stopping service files..."
+echo "Disabling service files..."
     systemctl --user disable --now mergerfs.service
     systemctl --user disable --now rclone-vfs.service
     systemctl --user disable --now rclone-normal.service
+    systemctl --user disable --now rclone-uploader.service
+    systemctl --user disable --now rclone-uploader.timer
 
 echo "Killing all rclone/mergerfs instances..."
     killall rclone
