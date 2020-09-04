@@ -16,7 +16,8 @@ ExecStart=/homexx/yyyyy/bin/rclone mount gdrive: /homexx/yyyyy/Stuff/Mount \
   --poll-interval=15s \
   --vfs-cache-mode full \
   --cache-dir /homexx/yyyyy/.vfs-cache \
-  --vfs-cache-max-age iiiii \
+  --vfs-cache-max-age 168h \
+  --vfs-cache-max-size iiiii \
   --tpslimit 10 \
   --rc \
   --rc-addr=127.0.0.1:zzzzz \
