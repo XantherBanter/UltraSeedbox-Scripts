@@ -17,6 +17,8 @@ clear
 
 # Variables
 password=$(openssl rand -hex 12)
+quota=$(bc -l <<< "$(quota | grep "/" | awk {'print $3'})*1000*.05")
+z=$(numfmt --to=iec-i "$quota" | cut -b -3)
 
 echo "Creating necessary folders..."
     mkdir -p "$HOME"/Stuff
@@ -26,6 +28,7 @@ echo "Creating necessary folders..."
     mkdir -p "$HOME"/.config/systemd/user
     mkdir -p "$HOME"/.rclone-tmp
     mkdir -p "$HOME"/.mergerfs-tmp
+    mkdir -p "$HOME"/.vfs-cache
 
 echo "Disabling service files..."
     systemctl --user disable --now mergerfs.service
@@ -132,6 +135,7 @@ echo "Done. Downloading service files..."
     wget https://raw.githubusercontent.com/XantherBanter/UltraSeedbox-Scripts/master/MergerFS-Rclone/Service%20Files/mergerfs.service
     sed -i "s|/homexx/yyyyy|$HOME|g" "$HOME"/.config/systemd/user/rclone-vfs.service
     sed -i "s|gdrive:|$remotename:|g" "$HOME"/.config/systemd/user/rclone-vfs.service
+    sed -i "s|iiiii|$z|g" "$HOME"/.config/systemd/user/rclone-vfs.service
     sed -i "s|zzzzz|$port|g" "$HOME"/.config/systemd/user/rclone-vfs.service
     sed -i "s|ttttt|$USER|g" "$HOME"/.config/systemd/user/rclone-vfs.service
     sed -i "s|vvvvv|$password|g" "$HOME"/.config/systemd/user/rclone-vfs.service
@@ -244,7 +248,7 @@ echo "Are you using Plex?"
 read -p "Type yes or no: " input1
 if [ "$input1" = "yes" ]
 then
-    echo "Applying sweaks to Plex...."
+    echo "Applying some tweaks to Plex...."
     sed -i -E 's/GenerateIntroMarkerBehavior="(scheduled|asap)"/GenerateIntroMarkerBehavior="never"/g' "$HOME"/.config/plex/Library/Application\ Support/Plex\ Media\ Server/Preferences.xml
     sed -i -E 's/GenerateChapterThumbBehavior="(scheduled|asap)"/GenerateChapterThumbBehavior="never"/g' "$HOME"/.config/plex/Library/Application\ Support/Plex\ Media\ Server/Preferences.xml
     sed -i -E 's/LoudnessAnalysisBehavior="(scheduled|asap)"/LoudnessAnalysisBehavior="never"/g' "$HOME"/.config/plex/Library/Application\ Support/Plex\ Media\ Server/Preferences.xml

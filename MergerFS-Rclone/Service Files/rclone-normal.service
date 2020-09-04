@@ -10,6 +10,7 @@ Environment=GOMAXPROCS=2
 
 ExecStart=/homexx/yyyyy/bin/rclone mount remote: /homexx/yyyyy/Stuff/Mount \
   --config /homexx/yyyyy/.config/rclone/rclone.conf \
+  --vfs-cache-mode off \
   --use-mmap
 
 StandardOutput=file:/homexx/yyyyy/scripts/rclone_mount.log
