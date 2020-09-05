@@ -18,7 +18,7 @@ clear
 # Variables
 password=$(openssl rand -hex 12)
 quota=$(bc -l <<< "$(quota | grep "/" | awk {'print $3'})*1000*.05")
-z=$(numfmt --to=iec-i "$quota" | cut -b -3)
+ze=$(numfmt --to=iec-i "$quota" | cut -b -3)
 
 echo "Creating necessary folders..."
     mkdir -p "$HOME"/Stuff
@@ -76,36 +76,45 @@ echo "Installing mergerfs..."
 
 clear
 
-echo "Please set up your rclone config now. During this time, rclone config will be executed."
-echo ""
-echo "Please setup/check your remotes before continuing."
-echo ""
-echo "Refer to the following sites for help on this."
-echo "=========================================================================="
-echo "https://rclone.org/commands/rclone_config/"
-echo "https://docs.usbx.me/books/rclone/page/configuring-oauth-for-google-drive"
-echo "==========================================================================="
-echo ""
-echo "Also take note of your remote name."
-echo "If you already set it up, you can safely quit config."
+echo "Have you configured your rclone remote?"
+read -p "Type yes or no: " rconfig
+if [ "$rconfig" = "yes" ]
+then
+    sleep 3
+elif [ "$rconfig" = "no" ]
+then
+    echo "Please set up your rclone config now. During this time, rclone config will be executed."
+    echo ""
+    echo "Please setup/check your remotes before continuing."
+    echo ""
+    echo "Refer to the following sites for help on this."
+    echo "=========================================================================="
+    echo "https://rclone.org/commands/rclone_config/"
+    echo "https://docs.usbx.me/books/rclone/page/configuring-oauth-for-google-drive"
+    echo "==========================================================================="
+    echo ""
+    echo "Also take note of your remote name."
     sleep 5
     clear
     rclone config
     wait
-
-clear
+fi
 
 echo "Name of remote? Type below and press Enter."
 echo "Make sure it's the correct remote name or setup will fail."
-    read -r remotename
-    sleep 2
-    echo ""
+read -r remotename
+sleep 2
+if grep -q -E "\[$remotename\]" "$HOME"/.config/rclone/rclone.conf; then
     echo ""
     echo "Your remote name is $remotename."
     echo "This will be appended to your rclone mount service files."
     echo ""
-
-clear
+    sleep 2
+else
+    echo ""
+    echo "Remote not found. Please run the script again."
+    exit
+fi
 
 # Port Picker
 clear
@@ -135,7 +144,7 @@ echo "Done. Downloading service files..."
     wget https://raw.githubusercontent.com/XantherBanter/UltraSeedbox-Scripts/master/MergerFS-Rclone/Service%20Files/mergerfs.service
     sed -i "s|/homexx/yyyyy|$HOME|g" "$HOME"/.config/systemd/user/rclone-vfs.service
     sed -i "s|gdrive:|$remotename:|g" "$HOME"/.config/systemd/user/rclone-vfs.service
-    sed -i "s|iiiii|$z|g" "$HOME"/.config/systemd/user/rclone-vfs.service
+    sed -i "s|iiiii|$ze|g" "$HOME"/.config/systemd/user/rclone-vfs.service
     sed -i "s|zzzzz|$port|g" "$HOME"/.config/systemd/user/rclone-vfs.service
     sed -i "s|ttttt|$USER|g" "$HOME"/.config/systemd/user/rclone-vfs.service
     sed -i "s|vvvvv|$password|g" "$HOME"/.config/systemd/user/rclone-vfs.service
@@ -155,6 +164,12 @@ echo "Adding Aliases..."
         touch "$HOME"/.bash_aliases
         echo "alias vfs-refresh='$HOME/bin/rclone rc vfs/refresh --rc-addr=127.0.0.1:zzzzz --rc-user=ttttt --rc-pass=vvvvv'" >> "$HOME"/.bash_aliases
         echo "alias vfs-forget='$HOME/bin/rclone rc vfs/forget --rc-addr=127.0.0.1:zzzzz --rc-user=ttttt --rc-pass=vvvvv'" >> "$HOME"/.bash_aliases
+        echo "alias vfs-start='systemctl --user start rclone-vfs.service && systemctl --user start mergerfs.service'" >> "$HOME"/.bash_aliases
+        echo "alias vfs-stop='systemctl --user stop mergerfs.service && systemctl --user stop rclone-vfs.service'" >> "$HOME"/.bash_aliases
+        echo "alias vfs-restart='systemctl --user stop mergerfs.service && systemctl --user stop rclone-vfs.service && sleep 3 && systemctl --user start rclone-vfs.service && systemctl --user start mergerfs.service'" >> "$HOME"/.bash_aliases
+        echo "alias vfs-uploader-start='systemctl --user start rclone-uploader.service && systemctl --user start rclone-uploader.timer'" >> "$HOME"/.bash_aliases
+        echo "alias vfs-uploader-stop='systemctl --user stop rclone-uploader.timer && systemctl --user stop rclone-uploader.service'" >> "$HOME"/.bash_aliases
+        echo "alias vfs-uploader-disable='systemctl --user disable --now rclone-uploader.timer && systemctl --user disable --now rclone-uploader.service'" >> "$HOME"/.bash_aliases
         sed -i "s|zzzzz|$port|g" "$HOME"/.bash_aliases
         sed -i "s|ttttt|$USER|g" "$HOME"/.bash_aliases
         sed -i "s|vvvvv|$password|g" "$HOME"/.bash_aliases
@@ -163,6 +178,12 @@ echo "Adding Aliases..."
         sed -i '/^alias vfs-/d' "$HOME"/.bash_aliases
         echo "alias vfs-refresh='$HOME/bin/rclone rc vfs/refresh --rc-addr=127.0.0.1:zzzzz --rc-user=ttttt --rc-pass=vvvvv'" >> "$HOME"/.bash_aliases
         echo "alias vfs-forget='$HOME/bin/rclone rc vfs/forget --rc-addr=127.0.0.1:zzzzz --rc-user=ttttt --rc-pass=vvvvv'" >> "$HOME"/.bash_aliases
+        echo "alias vfs-start='systemctl --user start rclone-vfs.service && systemctl --user start mergerfs.service'" >> "$HOME"/.bash_aliases
+        echo "alias vfs-stop='systemctl --user stop mergerfs.service && systemctl --user stop rclone-vfs.service'" >> "$HOME"/.bash_aliases
+        echo "alias vfs-restart='systemctl --user stop mergerfs.service && systemctl --user stop rclone-vfs.service && sleep 3 && systemctl --user start rclone-vfs.service && systemctl --user start mergerfs.service'" >> "$HOME"/.bash_aliases
+        echo "alias vfs-uploader-start='systemctl --user start rclone-uploader.service && systemctl --user start rclone-uploader.timer'" >> "$HOME"/.bash_aliases
+        echo "alias vfs-uploader-stop='systemctl --user stop rclone-uploader.timer && systemctl --user stop rclone-uploader.service'" >> "$HOME"/.bash_aliases
+        echo "alias vfs-uploader-disable='systemctl --user disable --now rclone-uploader.timer && systemctl --user disable --now rclone-uploader.service'" >> "$HOME"/.bash_aliases
         sed -i "s|zzzzz|$port|g" "$HOME"/.bash_aliases
         sed -i "s|ttttt|$USER|g" "$HOME"/.bash_aliases
         sed -i "s|vvvvv|$password|g" "$HOME"/.bash_aliases
@@ -170,6 +191,12 @@ echo "Adding Aliases..."
         echo "bash_aliases found. Adding vfs aliases..."
         echo "alias vfs-refresh='$HOME/bin/rclone rc vfs/refresh --rc-addr=127.0.0.1:zzzzz --rc-user=ttttt --rc-pass=vvvvv'" >> "$HOME"/.bash_aliases
         echo "alias vfs-forget='$HOME/bin/rclone rc vfs/forget --rc-addr=127.0.0.1:zzzzz --rc-user=ttttt --rc-pass=vvvvv'" >> "$HOME"/.bash_aliases
+        echo "alias vfs-start='systemctl --user start rclone-vfs.service && systemctl --user start mergerfs.service'" >> "$HOME"/.bash_aliases
+        echo "alias vfs-stop='systemctl --user stop mergerfs.service && systemctl --user stop rclone-vfs.service'" >> "$HOME"/.bash_aliases
+        echo "alias vfs-restart='systemctl --user stop mergerfs.service && systemctl --user stop rclone-vfs.service && sleep 3 && systemctl --user start rclone-vfs.service && systemctl --user start mergerfs.service'" >> "$HOME"/.bash_aliases
+        echo "alias vfs-uploader-start='systemctl --user start rclone-uploader.service && systemctl --user start rclone-uploader.timer'" >> "$HOME"/.bash_aliases
+        echo "alias vfs-uploader-stop='systemctl --user stop rclone-uploader.timer && systemctl --user stop rclone-uploader.service'" >> "$HOME"/.bash_aliases
+        echo "alias vfs-uploader-disable='systemctl --user disable --now rclone-uploader.timer && systemctl --user disable --now rclone-uploader.service'" >> "$HOME"/.bash_aliases
         sed -i "s|zzzzz|$port|g" "$HOME"/.bash_aliases
         sed -i "s|ttttt|$USER|g" "$HOME"/.bash_aliases
         sed -i "s|vvvvv|$password|g" "$HOME"/.bash_aliases
@@ -257,6 +284,8 @@ then
     sed -i 's|DlnaReportTimeline="1"|DlnaReportTimeline="0"|g' "$HOME"/.config/plex/Library/Application\ Support/Plex\ Media\ Server/Preferences.xml
     sed -i 's|DlnaEnabled="1"|DlnaEnabled="0"|g' "$HOME"/.config/plex/Library/Application\ Support/Plex\ Media\ Server/Preferences.xml
     sed -i 's|GdmEnabled="1"|GdmEnabled="0"|g' "$HOME"/.config/plex/Library/Application\ Support/Plex\ Media\ Server/Preferences.xml
+    app-plex restart
+    sleep 10
 elif [ "$input1" = "no" ]
 then
     echo "Skipping..."
@@ -271,7 +300,7 @@ echo "Cleaning up..."
 
 # Uploader Service Prompt
 clear
-echo "Do you want to start the uploader service?"
+echo "Do you want to start the rclone uploader service?"
 read -p "Type yes or no: " input2
 if [ "$input2" = "yes" ]
 then
@@ -300,5 +329,11 @@ echo "Just type the following commands in your shell"
 echo ""
 echo "vfs-refresh = This pulls the latest changes from the remote and refreshes the directory cache in your mount."
 echo "vfs-forget = This forgets the directory paths of the rclone mount, causing it to be reread from the remote."
+echo "vfs-start = This starts the vfs mount."
+echo "vfs-stop = This stops the vfs mount"
+echo "vfs-restart = This restarts the vfs mount."
+echo "vfs-uploader-start = This starts the uploader service and upload the contents of Stuff/Local immediately."
+echo "vfs-uploader-stop = This stops the uploader service."
+echo "vfs-uploader-disable = This stops the uploader and disables it from automatically from automatically starting when the server reboots."
 
 exit
